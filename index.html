@@ -7,35 +7,59 @@
     <!-- Big Top circus-style font -->
     <link href="https://fonts.googleapis.com/css2?family=Big+Top&display=swap" rel="stylesheet">
 
-
     <style>
         body {
             text-align: center;
             background-color: #ffffff;
             margin: 0;
             padding: 40px;
-            font-family: Arial, sans-serif;
         }
 
         h1 {
-            font-family: 'Big Top';
-            font-size: 80px;
-            letter-spacing: 8px;
+            font-family: 'Big Top', cursive;
+            font-size: 96px;
+            letter-spacing: 6px;
             margin-bottom: 30px;
+            text-transform: uppercase;
         }
 
-        .red {
-            color: red;
-        }
+        .red { color: #E8000D; }
+        .blue { color: #0051BA; }
 
-        .blue {
-            color: blue;
-        }
-
-        img {
+        img.main {
             max-width: 90%;
             height: auto;
             border: 5px solid #000;
+        }
+
+        .score {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 14px;
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .men { color: #0051BA; }    /* KU Blue */
+        .women { color: #E8000D; }  /* KU Red */
+
+        .team {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .team img {
+            width: 36px;
+            height: 36px;
+        }
+
+        footer {
+            margin-top: 40px;
+            font-size: 14px;
+            color: #555;
         }
     </style>
 </head>
@@ -48,7 +72,70 @@
         <span class="blue">H</span>
     </h1>
 
-    <img src="67.jpg" alt="RCJH Image">
+    <img src="67.jpg" alt="RCJH Image" class="main">
+
+    <div class="score men" id="menScore">Men’s Basketball: Loading…</div>
+    <div class="score women" id="womenScore">Women’s Basketball: Loading…</div>
+
+    <footer>
+        <div id="counter">Visits: 0</div>
+    </footer>
+
+    <script>
+        // Visit counter (localStorage)
+        let count = localStorage.getItem('visitCount') || 0;
+        count++;
+        localStorage.setItem('visitCount', count);
+        document.getElementById('counter').textContent = 'Visits: ' + count;
+
+        async function fetchScores() {
+            try {
+                const apiKey = 'YOUR_API_KEY';
+
+                // MEN'S GAME
+                const menEvent = await fetch(`https://www.thesportsdb.com/api/v1/json/${apiKey}/eventslast.php?id=134879`);
+                const menData = await menEvent.json();
+                const m = menData.results[0];
+
+                const menHTML = `
+                    <div class="team">
+                        <img src="${m.strHomeTeamBadge}">
+                        ${m.strHomeTeam} ${m.intHomeScore}
+                    </div>
+                    –
+                    <div class="team">
+                        ${m.intAwayScore} ${m.strAwayTeam}
+                        <img src="${m.strAwayTeamBadge}">
+                    </div>
+                `;
+                document.getElementById('menScore').innerHTML = menHTML;
+
+                // WOMEN'S GAME
+                const womenEvent = await fetch(`https://www.thesportsdb.com/api/v1/json/${apiKey}/eventslast.php?id=134880`);
+                const womenData = await womenEvent.json();
+                const w = womenData.results[0];
+
+                const womenHTML = `
+                    <div class="team">
+                        <img src="${w.strHomeTeamBadge}">
+                        ${w.strHomeTeam} ${w.intHomeScore}
+                    </div>
+                    –
+                    <div class="team">
+                        ${w.intAwayScore} ${w.strAwayTeam}
+                        <img src="${w.strAwayTeamBadge}">
+                    </div>
+                `;
+                document.getElementById('womenScore').innerHTML = womenHTML;
+
+            } catch (e) {
+                console.error("Score fetch failed", e);
+            }
+        }
+
+        fetchScores();
+        setInterval(fetchScores, 120000); // refresh every 2 minutes
+    </script>
 
 </body>
 </html>
