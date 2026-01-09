@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RCJH</title>
 
-    <!-- Big Top circus-style font -->
-    <link href="https://fonts.googleapis.com/css2?family=Big+Top&display=swap" rel="stylesheet">
-
     <style>
         body {
             text-align: center;
@@ -18,7 +15,7 @@
         }
 
         h1 {
-            font-family: 'Big Top', cursive;
+            font-family: "Trajan Pro", "Trajan", "Times New Roman", serif;
             font-size: clamp(56px, 10vw, 96px);
             letter-spacing: 6px;
             margin-bottom: 24px;
@@ -54,6 +51,8 @@
             font-size: 13px;
             margin-bottom: 12px;
             opacity: 0.9;
+            font-family: "Trajan Pro", "Trajan", serif;
+            letter-spacing: 1px;
         }
 
         .team-row {
@@ -69,6 +68,8 @@
             align-items: center;
             gap: 10px;
             font-size: 18px;
+            font-family: "Trajan Pro", "Trajan", serif;
+            letter-spacing: 1px;
         }
 
         .team-info img {
@@ -79,6 +80,7 @@
         .score {
             font-size: 30px;
             font-weight: bold;
+            font-family: "Trajan Pro", "Trajan", serif;
         }
 
         footer {
@@ -152,7 +154,7 @@
                         <div>Final${wentOT ? ' • OT' : ''}</div>
                     </div>
 
-                    <!-- AWAY TEAM (TOP) -->
+                    <!-- AWAY TEAM -->
                     <div class="team-row">
                         <div class="team-info">
                             <img src="${g.strAwayTeamBadge}">
@@ -161,7 +163,7 @@
                         <div class="score">${g.intAwayScore}</div>
                     </div>
 
-                    <!-- HOME TEAM (BOTTOM) -->
+                    <!-- HOME TEAM -->
                     <div class="team-row">
                         <div class="team-info">
                             <img src="${g.strHomeTeamBadge}">
