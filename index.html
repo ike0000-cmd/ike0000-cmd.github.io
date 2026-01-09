@@ -40,10 +40,8 @@
             font-size: 24px;
             font-weight: bold;
             margin-top: 20px;
+            color: #0051BA; /* Men's KU Blue */
         }
-
-        .men { color: #0051BA; }    /* KU Blue */
-        .women { color: #E8000D; }  /* KU Red */
 
         .team {
             display: flex;
@@ -66,76 +64,4 @@
 <body>
 
     <h1>
-        <span class="red">R</span>
-        <span class="blue">C</span>
-        <span class="red">J</span>
-        <span class="blue">H</span>
-    </h1>
-
-    <img src="67.jpg" alt="RCJH Image" class="main">
-
-    <div class="score men" id="menScore">Men’s Basketball: Loading…</div>
-    <div class="score women" id="womenScore">Women’s Basketball: Loading…</div>
-
-    <footer>
-        <div id="counter">Visits: 0</div>
-    </footer>
-
-    <script>
-        // Visit counter (localStorage)
-        let count = localStorage.getItem('visitCount') || 0;
-        count++;
-        localStorage.setItem('visitCount', count);
-        document.getElementById('counter').textContent = 'Visits: ' + count;
-
-        async function fetchScores() {
-            try {
-                const apiKey = '123';
-
-                // MEN'S GAME
-                const menEvent = await fetch(`https://www.thesportsdb.com/api/v1/json/${apiKey}/eventslast.php?id=134879`);
-                const menData = await menEvent.json();
-                const m = menData.results[0];
-
-                const menHTML = `
-                    <div class="team">
-                        <img src="${m.strHomeTeamBadge}">
-                        ${m.strHomeTeam} ${m.intHomeScore}
-                    </div>
-                    –
-                    <div class="team">
-                        ${m.intAwayScore} ${m.strAwayTeam}
-                        <img src="${m.strAwayTeamBadge}">
-                    </div>
-                `;
-                document.getElementById('menScore').innerHTML = menHTML;
-
-                // WOMEN'S GAME
-                const womenEvent = await fetch(`https://www.thesportsdb.com/api/v1/json/${apiKey}/eventslast.php?id=134880`);
-                const womenData = await womenEvent.json();
-                const w = womenData.results[0];
-
-                const womenHTML = `
-                    <div class="team">
-                        <img src="${w.strHomeTeamBadge}">
-                        ${w.strHomeTeam} ${w.intHomeScore}
-                    </div>
-                    –
-                    <div class="team">
-                        ${w.intAwayScore} ${w.strAwayTeam}
-                        <img src="${w.strAwayTeamBadge}">
-                    </div>
-                `;
-                document.getElementById('womenScore').innerHTML = womenHTML;
-
-            } catch (e) {
-                console.error("Score fetch failed", e);
-            }
-        }
-
-        fetchScores();
-        setInterval(fetchScores, 120000); // refresh every 2 minutes
-    </script>
-
-</body>
-</html>
+        <span c
