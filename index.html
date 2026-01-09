@@ -20,8 +20,7 @@
         /* OUTLINED CINZEL */
         .outlined {
             -webkit-text-stroke: 2px #ffffff;
-            text-shadow:
-                0 2px 3px rgba(0,0,0,0.6);
+            text-shadow: 0 2px 3px rgba(0,0,0,0.6);
         }
 
         h1 {
@@ -135,15 +134,15 @@
     </div>
 
     <footer>
-        <div id="counter">Visits: 0</div>
+        <div id="counter">0</div>
     </footer>
 
     <script>
-        // Visit counter
+        // Visit counter without the word "Visits"
         let count = localStorage.getItem('visitCount') || 0;
         count++;
         localStorage.setItem('visitCount', count);
-        document.getElementById('counter').textContent = 'Visits: ' + count;
+        document.getElementById('counter').textContent = count;
 
         async function fetchScore() {
             try {
