@@ -51,62 +51,31 @@
             font-size: 14px;
             margin-bottom: 10px;
             opacity: 0.85;
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>RCJH</title>
-
-    <!-- Big Top circus-style font -->
-    <link href="https://fonts.googleapis.com/css2?family=Big+Top&display=swap" rel="stylesheet">
-
-    <style>
-        body {
-            text-align: center;
-            background-color: #ffffff;
-            margin: 0;
-            padding: 40px;
         }
 
-        h1 {
-            font-family: 'Big Top', cursive;
-            font-size: 96px;
-            letter-spacing: 6px;
-            margin-bottom: 30px;
-            text-transform: uppercase;
+        .team-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-top: 1px solid rgba(255,255,255,0.15);
         }
 
-        .red { color: #E8000D; }
-        .blue { color: #0051BA; }
+        .team-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+        }
 
-        img.main {
-            max-width: 90%;
-            height: auto;
-            border: 5px solid #000;
+        .team-info img {
+            width: 40px;
+            height: 40px;
         }
 
         .score {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 14px;
-            font-size: 24px;
+            font-size: 32px;
             font-weight: bold;
-            margin-top: 20px;
-        }
-
-        .men { color: #0051BA; }    /* KU Blue */
-        .women { color: #E8000D; }  /* KU Red */
-
-        .team {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .team img {
-            width: 36px;
-            height: 36px;
         }
 
         footer {
@@ -127,134 +96,65 @@
 
     <img src="67.jpg" alt="RCJH Image" class="main">
 
-    <div class="score men" id="menScore">Men’s Basketball: Loading…</div>
-    <div class="score women" id="womenScore">Women’s Basketball: Loading…</div>
+    <div class="scoreboard" id="scoreboard">
+        Loading scoreboard…
+    </div>
 
     <footer>
         <div id="counter">Visits: 0</div>
     </footer>
 
     <script>
-        // Visit counter (localStorage)
+        // Visit counter
         let count = localStorage.getItem('visitCount') || 0;
         count++;
         localStorage.setItem('visitCount', count);
         document.getElementById('counter').textContent = 'Visits: ' + count;
 
-        async function fetchScores() {
+        async function fetchScore() {
             try {
                 const apiKey = '123';
+                const res = await fetch(
+                    `https://www.thesportsdb.com/api/v1/json/${apiKey}/eventslast.php?id=138589`
+                );
+                const data = await res.json();
+                const g = data.results[0];
 
-                // MEN'S GAME
-                const menEvent = await fetch(`https://www.thesportsdb.com/api/v1/json/${apiKey}/eventslast.php?id=138589`);
-                const menData = await menEvent.json();
-                const m = menData.results[0];
+                const gameDate = new Date(g.dateEvent).toLocaleDateString();
+                const wentOT = g.strDescriptionEN && g.strDescriptionEN.includes('OT');
 
-                const menHTML = `
-                    <div class="team">
-                        <img src="${m.strHomeTeamBadge}">
-                        ${m.strHomeTeam} ${m.intHomeScore}
+                document.getElementById('scoreboard').innerHTML = `
+                    <div class="scoreboard-header">
+                        <div>${gameDate}</div>
+                        <div>Final${wentOT ? ' • OT' : ''}</div>
                     </div>
-                    –
-                    <div class="team">
-                        ${m.intAwayScore} ${m.strAwayTeam}
-                        <img src="${m.strAwayTeamBadge}">
-                    </div>
-                `;
-                document.getElementById('menScore').innerHTML = menHTML;
 
-                // WOMEN'S GAME
-                const womenEvent = await fetch(`https://www.thesportsdb.com/api/v1/json/${apiKey}/eventslast.php?id=154199`);
-                const womenData = await womenEvent.json();
-                const w = womenData.results[0];
-
-                const womenHTML = `
-                    <div class="team">
-                        <img src="${w.strHomeTeamBadge}">
-                        ${w.strHomeTeam} ${w.intHomeScore}
+                    <div class="team-row">
+                        <div class="team-info">
+                            <img src="${g.strHomeTeamBadge}">
+                            ${g.strHomeTeam}
+                        </div>
+                        <div class="score">${g.intHomeScore}</div>
                     </div>
-                    –
-                    <div class="team">
-                        ${w.intAwayScore} ${w.strAwayTeam}
-                        <img src="${w.strAwayTeamBadge}">
+
+                    <div class="team-row">
+                        <div class="team-info">
+                            <img src="${g.strAwayTeamBadge}">
+                            ${g.strAwayTeam}
+                        </div>
+                        <div class="score">${g.intAwayScore}</div>
                     </div>
                 `;
-                document.getElementById('womenScore').innerHTML = womenHTML;
-
             } catch (e) {
-                console.error("Score fetch failed", e);
+                document.getElementById('scoreboard').textContent =
+                    'Unable to load score.';
+                console.error(e);
             }
         }
 
-        fetchScores();
-        setInterval(fetchScores, 120000); // refresh every 2 minutes
+        fetchScore();
+        setInterval(fetchScore, 120000);
     </script>
 
 </body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>RCJH</title>
-
-    <!-- Big Top circus-style font -->
-    <link href="https://fonts.googleapis.com/css2?family=Big+Top&display=swap" rel="stylesheet">
-
-    <style>
-        body {
-            text-align: center;
-            background-color: #ffffff;
-            margin: 0;
-            padding: 40px;
-        }
-
-        h1 {
-            font-family: 'Big Top', cursive;
-            font-size: 96px;
-            letter-spacing: 6px;
-            margin-bottom: 30px;
-            text-transform: uppercase;
-        }
-
-        .red { color: #E8000D; }
-        .blue { color: #0051BA; }
-
-        img.main {
-            max-width: 90%;
-            height: auto;
-            border: 5px solid #000;
-        }
-
-        .score {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 14px;
-            font-size: 24px;
-            font-weight: bold;
-            margin-top: 20px;
-            color: #0051BA; /* Men's KU Blue */
-        }
-
-        .team {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .team img {
-            width: 36px;
-            height: 36px;
-        }
-
-        footer {
-            margin-top: 40px;
-            font-size: 14px;
-            color: #555;
-        }
-    </style>
-</head>
-<body>
-
-    <h1>
-        <span c
+</html>
