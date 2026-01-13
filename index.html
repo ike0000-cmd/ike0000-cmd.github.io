@@ -138,58 +138,76 @@
     </footer>
 
     <script>
-        // Visit counter without the word "Visits"
-        let count = localStorage.getItem('visitCount') || 0;
-        count++;
-        localStorage.setItem('visitCount', count);
-        document.getElementById('counter').textContent = count;
+    // Visit counter (number only)
+    let count = localStorage.getItem('visitCount') || 0;
+    count++;
+    localStorage.setItem('visitCount', count);
+    document.getElementById('counter').textContent = count;
 
-        async function fetchScore() {
-            try {
-                const apiKey = '123';
-                const res = await fetch(
-                    `https://www.thesportsdb.com/api/v1/json/${apiKey}/eventslast.php?id=138589`
-                );
-                const data = await res.json();
-                const g = data.results[0];
+    async function fetchScore() {
+        try {
+            const res = await fetch(
+                'https://site.web.api.espn.com/apis/v2/sports/basketball/mens-college-basketball/scoreboard'
+            );
+            const data = await res.json();
 
-                const gameDate = new Date(g.dateEvent).toLocaleDateString();
-                const wentOT = g.strDescriptionEN && g.strDescriptionEN.includes('OT');
+            // Find most recent Kansas game
+            const event = data.events.find(e =>
+                e.competitions[0].competitors.some(c =>
+                    c.team.displayName === 'Kansas Jayhawks'
+                )
+            );
 
-                document.getElementById('scoreboard').innerHTML = `
-                    <div class="scoreboard-header outlined">
-                        <div>${gameDate}</div>
-                        <div>Final${wentOT ? ' • OT' : ''}</div>
-                    </div>
-
-                    <!-- AWAY TEAM -->
-                    <div class="team-row">
-                        <div class="team-info outlined">
-                            <img src="${g.strAwayTeamBadge}">
-                            ${g.strAwayTeam}
-                        </div>
-                        <div class="score outlined">${g.intAwayScore}</div>
-                    </div>
-
-                    <!-- HOME TEAM -->
-                    <div class="team-row">
-                        <div class="team-info outlined">
-                            <img src="${g.strHomeTeamBadge}">
-                            ${g.strHomeTeam}
-                        </div>
-                        <div class="score outlined">${g.intHomeScore}</div>
-                    </div>
-                `;
-            } catch (e) {
+            if (!event) {
                 document.getElementById('scoreboard').textContent =
-                    'Unable to load score.';
-                console.error(e);
+                    'No recent Kansas game found.';
+                return;
             }
-        }
 
-        fetchScore();
-        setInterval(fetchScore, 120000);
-    </script>
+            const comp = event.competitions[0];
+            const status = comp.status.type;
+
+            const away = comp.competitors.find(c => c.homeAway === 'away');
+            const home = comp.competitors.find(c => c.homeAway === 'home');
+
+            const gameDate = new Date(event.date).toLocaleDateString();
+            const isFinal = status.completed;
+            const wentOT = status.description.includes('OT');
+
+            document.getElementById('scoreboard').innerHTML = `
+                <div class="scoreboard-header outlined">
+                    <div>${gameDate}</div>
+                    <div>${isFinal ? 'Final' : status.description}${wentOT ? ' • OT' : ''}</div>
+                </div>
+
+                <!-- AWAY TEAM -->
+                <div class="team-row">
+                    <div class="team-info outlined">
+                        <img src="${away.team.logo}">
+                        ${away.team.displayName}
+                    </div>
+                    <div class="score outlined">${away.score}</div>
+                </div>
+
+                <!-- HOME TEAM -->
+                <div class="team-row">
+                    <div class="team-info outlined">
+                        <img src="${home.team.logo}">
+                        ${home.team.displayName}
+                    </div>
+                    <div class="score outlined">${home.score}</div>
+                </div>
+            `;
+        } catch (e) {
+            document.getElementById('scoreboard').textContent =
+                'Unable to load scoreboard.';
+            console.error(e);
+        }
+    }
+
+    fetchScore();
+    setInterval(fetchScore, 120000);
+</script>
 
 </body>
 </html>
